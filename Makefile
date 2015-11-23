@@ -26,14 +26,15 @@ include $(DEVKITARM)/3ds_rules
 #     - icon.png
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+#TARGET		:=	$(notdir $(CURDIR))
+TARGET := KoopaCruiser
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
-APP_TITLE := HomebreWWW
-APP_DESCRIPTION := Basic web browser
-APP_AUTHOR := Joshua Kelly
+APP_TITLE := Koopa Cruiser
+APP_DESCRIPTION := A simple homebrew web browser
+APP_AUTHOR := jsa
 
 #---------------------------------------------------------------------------------
 # options for code generation

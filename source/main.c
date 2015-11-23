@@ -5,12 +5,15 @@
 
 #include <3ds.h>
 
+PrintConsole topScreen, bottomScreen;
+
 Result http_download(httpcContext *context)//This error handling needs updated with proper text printing once ctrulib itself supports that.
 {
 	Result ret=0;
-	u8* framebuf_top;
+	//u8* framebuf_top;
 	u32 statuscode=0;
-	u32 size=0, contentsize=0;
+	//u32 size=0;
+	u32 contentsize=0;
 	u8 *buf;
 
 	ret = httpcBeginRequest(context);
@@ -31,7 +34,10 @@ Result http_download(httpcContext *context)//This error handling needs updated w
 	if(ret!=0)return ret;
 	unsigned char *buffer = (unsigned char*)malloc(contentsize+1);
 
-	printf("\n\nHTTP %i)\n\n",contentsize, statuscode);
+	consoleSelect(&topScreen);
+
+	printf("HTTP status code: %i\n", statuscode);
+	printf("%i bytes\n", contentsize);
 	gfxFlushBuffers();
 
 	buf = (u8*)malloc(contentsize);
@@ -62,6 +68,7 @@ Result http_download(httpcContext *context)//This error handling needs updated w
 	gfxSwapBuffers();
 	gspWaitForVBlank();*/
 
+	consoleSelect(&bottomScreen);
 	printf("%s", buffer);
 
 	free(buf);
@@ -75,14 +82,20 @@ int main()
 	httpcContext context;
 
 	gfxInitDefault();
-	httpcInit();
 
-	consoleInit(GFX_BOTTOM,NULL);
+	consoleInit(GFX_TOP, &topScreen);
+	consoleInit(GFX_BOTTOM, &bottomScreen);
+	consoleSelect(&topScreen);
+	printf("Koopa Web Cruiser alpha\n");
+	printf("Press START to exit.\n\n");
+	gfxFlushBuffers();
+
+	httpcInit();
 
 	//Change this to your own URL.
 	char *url = "http://jsa.paperplane.io/index.html";
 
-	printf("%s",url);
+	printf("Loading %s\n\n",url);
 	gfxFlushBuffers();
 
 	ret = httpcOpenContext(&context, url , 0);
