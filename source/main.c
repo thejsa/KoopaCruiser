@@ -7,555 +7,128 @@
 
 PrintConsole topScreen, bottomScreen;
 
-int change = 1;
-int selchar = 1;
-int charpos = 0;
-char weburl[1000];
-
-u16 touch_x = 0;
-u16 touch_y = 0;
-touchPosition touch;
-
-char *url = "http://www.josamilu.de/index.html";
-
-Result ret=0;
-httpcContext context;
-
 Result http_download(httpcContext *context)//This error handling needs updated with proper text printing once ctrulib itself supports that.
 {
-    Result ret=0;
-    //u8* framebuf_top;
-    u32 statuscode=0;
-    //u32 size=0;
-    u32 contentsize=0;
-    u8 *buf;
+	Result ret=0;
+	//u8* framebuf_top;
+	u32 statuscode=0;
+	//u32 size=0;
+	u32 contentsize=0;
+	u8 *buf;
 
-    ret = httpcBeginRequest(context);
-    if(ret!=0)return ret;
+	ret = httpcBeginRequest(context);
+	if(ret!=0)return ret;
 
-    ret = httpcGetResponseStatusCode(context, &statuscode, 0);
-    if(ret!=0)return ret;
+	ret = httpcGetResponseStatusCode(context, &statuscode, 0);
+	if(ret!=0)return ret;
 
-    //printf("http status code: %i\n", statuscode);
+	//printf("http status code: %i\n", statuscode);
 
-    if(statuscode!=200){
-        printf("status code not 200, it was %i", statuscode);
-        gfxFlushBuffers();
-        return -2;
-    }
+	if(statuscode!=200){
+		printf("status code not 200, it was %i", statuscode);
+		gfxFlushBuffers();
+		return -2;
+	}
 
-    ret=httpcGetDownloadSizeState(context, NULL, &contentsize);
-    if(ret!=0)return ret;
-    unsigned char *buffer = (unsigned char*)malloc(contentsize+1);
+	ret=httpcGetDownloadSizeState(context, NULL, &contentsize);
+	if(ret!=0)return ret;
+	unsigned char *buffer = (unsigned char*)malloc(contentsize+1);
 
-    consoleSelect(&topScreen);
+	consoleSelect(&topScreen);
 
-    printf("HTTP status code: %i\n", statuscode);
-    printf("%i bytes\n", contentsize);
-    gfxFlushBuffers();
+	printf("HTTP status code: %i\n", statuscode);
+	printf("%i bytes\n", contentsize);
+	gfxFlushBuffers();
 
-    buf = (u8*)malloc(contentsize);
-    if(buf==NULL)return -1;
-    memset(buf, 0, contentsize);
+	buf = (u8*)malloc(contentsize);
+	if(buf==NULL)return -1;
+	memset(buf, 0, contentsize);
 
 
-    ret = httpcDownloadData(context, buffer, contentsize, NULL);
-    if(ret!=0)
-    {
-        free(buf);
-        return ret;
-    }
+	ret = httpcDownloadData(context, buffer, contentsize, NULL);
+	if(ret!=0)
+	{
+		free(buf);
+		return ret;
+	}
 
-    /*size = contentsize;
-    if(size>(240*400*3*2))size = 240*400*3*2;
-    framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-    memcpy(framebuf_top, buf, size);
-    gfxFlushBuffers();
-    gfxSwapBuffers();
-    framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-    memcpy(framebuf_top, buf, size);
-    gfxFlushBuffers();
-    gfxSwapBuffers();
-    gspWaitForVBlank();*/
+	/*size = contentsize;
+	if(size>(240*400*3*2))size = 240*400*3*2;
 
-    consoleSelect(&topScreen);
-    printf("%s", buffer);
+	framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	memcpy(framebuf_top, buf, size);
 
-    free(buf);
+	gfxFlushBuffers();
+	gfxSwapBuffers();
 
-    return 0;
+	framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+	memcpy(framebuf_top, buf, size);
+
+	gfxFlushBuffers();
+	gfxSwapBuffers();
+	gspWaitForVBlank();*/
+
+	consoleSelect(&bottomScreen);
+	printf("%s", buffer);
+
+	free(buf);
+
+	return 0;
 }
-
-Result http_downloadsave(httpcContext *context)//This error handling needs updated with proper text printing once ctrulib itself supports that.
-{
-    Result ret=0;
-    //u8* framebuf_top;
-    u32 statuscode=0;
-    //u32 size=0;
-    u32 contentsize=0;
-    u8 *buf;
-
-    ret = httpcBeginRequest(context);
-    if(ret!=0)return ret;
-
-    ret = httpcGetResponseStatusCode(context, &statuscode, 0);
-    if(ret!=0)return ret;
-
-    //printf("http status code: %i\n", statuscode);
-
-    if(statuscode!=200){
-        printf("status code not 200, it was %i", statuscode);
-        gfxFlushBuffers();
-        return -2;
-    }
-
-    ret=httpcGetDownloadSizeState(context, NULL, &contentsize);
-    if(ret!=0)return ret;
-    unsigned char *buffer = (unsigned char*)malloc(contentsize+1);
-
-    consoleSelect(&topScreen);
-
-    printf("HTTP status code: %i\n", statuscode);
-    printf("%i bytes\n", contentsize);
-    gfxFlushBuffers();
-
-    buf = (u8*)malloc(contentsize);
-    if(buf==NULL)return -1;
-    memset(buf, 0, contentsize);
-
-
-    ret = httpcDownloadData(context, buffer, contentsize, NULL);
-    if(ret!=0)
-    {
-        free(buf);
-        return ret;
-    }
-
-    /*size = contentsize;
-    if(size>(240*400*3*2))size = 240*400*3*2;
-    framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-    memcpy(framebuf_top, buf, size);
-    gfxFlushBuffers();
-    gfxSwapBuffers();
-    framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-    memcpy(framebuf_top, buf, size);
-    gfxFlushBuffers();
-    gfxSwapBuffers();
-    gspWaitForVBlank();*/
-
-    FILE *dlfile;
-    dlfile = fopen("downloaded.txt", "w");
-    fprintf(dlfile, "%s", buffer);
-    fclose(dlfile);
-
-    //consoleSelect(&topScreen);
-    //printf("%s", buffer);
-
-    free(buf);
-
-    return 0;
-}
-
-void shitkeyboard(u32 kDown)
-{
-
-    if(kDown & KEY_Y)
-    {
-        change = 1;
-        openwebpage();
-    }
-    else if(kDown & KEY_X)
-    {
-        change = 1;
-        downloadfile();
-    }
-    else if(kDown & KEY_TOUCH)
-    {
-        change = 1;
-        hidTouchRead(&touch);
-        touch_x = touch.px;
-        touch_y = touch.py;
-        if(touch_x > 0 && touch_x < 24)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 33;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 17;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 1;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 25;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 1;
-        }
-        else if(touch_x > 24 && touch_x < 48)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 34;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 23;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 19;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 24;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 30;
-        }
-        else if(touch_x > 48 && touch_x < 72)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 35;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 5;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 4;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 3;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 1;
-        }
-        else if(touch_x > 72 && touch_x < 96)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 36;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 18;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 6;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 22;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 45;
-        }
-        else if(touch_x > 96 && touch_x < 120)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 37;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 20;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 7;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 2;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 45;
-        }
-        else if(touch_x > 120 && touch_x < 144)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 38;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 26;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 8;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 14;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 45;
-        }
-        else if(touch_x > 144 && touch_x < 168)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 39;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 21;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 10;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 13;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 45;
-        }
-        else if(touch_x > 168 && touch_x < 192)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 40;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 9;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 11;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 43;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 28;
-        }
-        else if(touch_x > 192 && touch_x < 216)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 41;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 15;
-            else if(touch_y > 32 && touch_y < 48)
-                selchar = 12;
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 29;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 27;
-        }
-        else if(touch_x > 216 && touch_x < 240)
-        {
-            if(touch_y > 0 && touch_y < 16)
-                selchar = 42;
-            else if(touch_y > 16 && touch_y < 32)
-                selchar = 16;
-            else if(touch_y > 32 && touch_y < 48)
-            {
-                if(charpos > 0)
-                {
-                    weburl[charpos] = " ";
-                    charpos-=2;
-                }
-                selchar = 0;
-            }
-            else if(touch_y > 48 && touch_y < 64)
-                selchar = 32;
-            else if(touch_y > 64 && touch_y < 80)
-                selchar = 31;
-        }
-
-        switch(selchar)
-        {
-            case 1: weburl[charpos] = 'a';
-            break;
-            case 2: weburl[charpos] = 'b';
-            break;
-            case 3: weburl[charpos] = 'c';
-            break;
-            case 4: weburl[charpos] = 'd';
-            break;
-            case 5: weburl[charpos] = 'e';
-            break;
-            case 6: weburl[charpos] = 'f';
-            break;
-            case 7: weburl[charpos] = 'g';
-            break;
-            case 8: weburl[charpos] = 'h';
-            break;
-            case 9: weburl[charpos] = 'i';
-            break;
-            case 10: weburl[charpos] = 'j';
-            break;
-            case 11: weburl[charpos] = 'k';
-            break;
-            case 12: weburl[charpos] = 'l';
-            break;
-            case 13: weburl[charpos] = 'm';
-            break;
-            case 14: weburl[charpos] = 'n';
-            break;
-            case 15: weburl[charpos] = 'o';
-            break;
-            case 16: weburl[charpos] = 'p';
-            break;
-            case 17: weburl[charpos] = 'q';
-            break;
-            case 18: weburl[charpos] = 'r';
-            break;
-            case 19: weburl[charpos] = 's';
-            break;
-            case 20: weburl[charpos] = 't';
-            break;
-            case 21: weburl[charpos] = 'u';
-            break;
-            case 22: weburl[charpos] = 'v';
-            break;
-            case 23: weburl[charpos] = 'w';
-            break;
-            case 24: weburl[charpos] = 'x';
-            break;
-            case 25: weburl[charpos] = 'y';
-            break;
-            case 26: weburl[charpos] = 'z';
-            break;
-            case 27: weburl[charpos] = '/';
-            break;
-            case 28: weburl[charpos] = ':';
-            break;
-            case 29: weburl[charpos] = '.';
-            break;
-            case 30: weburl[charpos] = '=';
-            break;
-            case 31: weburl[charpos] = '+';
-            break;
-            case 32: weburl[charpos] = '-';
-            break;
-            case 33: weburl[charpos] = '1';
-            break;
-            case 34: weburl[charpos] = '2';
-            break;
-            case 35: weburl[charpos] = '3';
-            break;
-            case 36: weburl[charpos] = '4';
-            break;
-            case 37: weburl[charpos] = '5';
-            break;
-            case 38: weburl[charpos] = '6';
-            break;
-            case 39: weburl[charpos] = '7';
-            break;
-            case 40: weburl[charpos] = '8';
-            break;
-            case 41: weburl[charpos] = '9';
-            break;
-            case 42: weburl[charpos] = '0';
-            break;
-            case 43: weburl[charpos] = ' ';
-            break;
-            case 44: weburl[charpos] = ' ';
-            break;
-            case 45: weburl[charpos] = ' ';
-            break;
-        }
-        charpos++;
-
-
-    }
-
-    if(change == 1)
-    {
-        consoleSelect(&bottomScreen);
-        consoleClear();
-
-        printf("+--+--+--+--+--+--+--+--+--+--+\n");
-        printf("|1 |2 |3 |4 |5 |6 |7 |8 |9 |0 |\n");
-        printf("+--+--+--+--+--+--+--+--+--+--+\n");
-        printf("|Q |W |E |R |T |Z |U |I |O |P |\n");
-        printf("+--+--+--+--+--+--+--+--+--+--+\n");
-        printf("|A |S |D |F |G |H |J |K |L |<-|\n");
-        printf("+--+--+--+--+--+--+--+--+--+--+\n");
-        printf("|Y |X |C |V |B |N |M |, |. |- |\n");
-        printf("+--+--+--+--+--+--+--+--+--+--+\n");
-        printf("|  |= |  |           |: |/ |+ |\n");
-        printf("+--+--+--+-----------+--+--+--+\n");
-
-        printf("\n");
-        printf("Url : ");
-        int x = 0;
-        for(x = 0;x<charpos;x++)
-        {
-            printf("%c", weburl[x]);
-        }
-        printf("\n");
-        printf("Charpos : %i \n", charpos);
-
-        printf("Touchscreen : %i, %i \n", touch_x,touch_y);
-
-        change = 0;
-    }
-
-
-
-
-}
-
-
-void openwebpage()
-{
-
-    consoleSelect(&topScreen);
-    consoleClear();
-    printf("Koopa Cruiser\n");
-    printf("Press START to exit.\n\n");
-    gfxFlushBuffers();
-
-    url = weburl;
-    printf("Loading : %s ...\n",url);
-    gfxFlushBuffers();
-
-    ret = httpcOpenContext(&context, url , 0);
-    gfxFlushBuffers();
-
-    if(ret==0)
-    {
-        ret=http_download(&context);
-        gfxFlushBuffers();
-        httpcCloseContext(&context);
-    }
-
-}
-
-void downloadfile()
-{
-    consoleSelect(&topScreen);
-    consoleClear();
-    printf("Koopa Cruiser\n");
-    printf("Press START to exit.\n\n");
-    gfxFlushBuffers();
-
-    url = weburl;
-    printf("Downloading : %s ...\n",url);
-    gfxFlushBuffers();
-
-    ret = httpcOpenContext(&context, url , 0);
-    gfxFlushBuffers();
-
-    if(ret==0)
-    {
-        ret=http_downloadsave(&context);
-        gfxFlushBuffers();
-        httpcCloseContext(&context);
-    }
-}
-
 
 int main()
 {
+	Result ret=0;
+	httpcContext context;
 
+	gfxInitDefault();
 
-    gfxInitDefault();
+	consoleInit(GFX_TOP, &topScreen);
+	consoleInit(GFX_BOTTOM, &bottomScreen);
+	consoleSelect(&topScreen);
+	printf("Koopa Web Cruiser alpha\n");
+	printf("Press START to exit.\n\n");
+	gfxFlushBuffers();
 
-    consoleInit(GFX_TOP, &topScreen);
-    consoleInit(GFX_BOTTOM, &bottomScreen);
-    consoleSelect(&topScreen);
-    printf("Koopa Cruiser"\n");
-    printf("Press START to exit.\n\n");
-    gfxFlushBuffers();
+	httpcInit();
 
-    httpcInit();
+	//Change this to your own URL.
+	char *url = "http://jsa.paperplane.io/index.html";
 
-    //Change this to your own URL.
+	printf("Loading %s\n\n",url);
+	gfxFlushBuffers();
 
+	ret = httpcOpenContext(&context, url , 0);
+	//printf("return from httpcOpenContext: %"PRId32"\n",ret);
+	gfxFlushBuffers();
 
+	if(ret==0)
+	{
+		ret=http_download(&context);
+		//printf("return from http_download: %"PRId32"\n",ret);
+		gfxFlushBuffers();
+		httpcCloseContext(&context);
+	}
 
-    //printf("Loading %s\n\n",url);
-    //gfxFlushBuffers();
+	// Main loop
+	while (aptMainLoop())
+	{
+		gspWaitForVBlank();
+		hidScanInput();
 
-    //ret = httpcOpenContext(&context, url , 0);
-    //printf("return from httpcOpenContext: %"PRId32"\n",ret);
-    //gfxFlushBuffers();
+		// Your code goes here
 
-    /*
-    if(ret==0)
-    {
-        ret=http_download(&context);
-        //printf("return from http_download: %"PRId32"\n",ret);
-        gfxFlushBuffers();
-        httpcCloseContext(&context);
-    }
+		u32 kDown = hidKeysDown();
+		if (kDown & KEY_START)
+			break; // break in order to return to hbmenu
 
-    */
-    // Main loop
-    while (aptMainLoop())
-    {
-        gspWaitForVBlank();
-        hidScanInput();
+		// Flush and swap framebuffers
+		gfxFlushBuffers();
+		gfxSwapBuffers();
+	}
 
-        // Your code goes here
-
-        u32 kDown = hidKeysDown();
-        if (kDown & KEY_START)
-            break; // break in order to return to hbmenu
-
-        //Shitkeyboard
-        shitkeyboard(kDown);
-
-        // Flush and swap framebuffers
-        gfxFlushBuffers();
-        gfxSwapBuffers();
-    }
-
-    // Exit services
-    httpcExit();
-    gfxExit();
-    return 0;
+	// Exit services
+	httpcExit();
+	gfxExit();
+	return 0;
 }
