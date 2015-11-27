@@ -35,6 +35,8 @@ INCLUDES	:=	include
 APP_TITLE := Koopa Cruiser
 APP_DESCRIPTION := A simple homebrew web browser
 APP_AUTHOR := jsa
+# version (from git describe)
+GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -45,7 +47,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS
+CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DVERSION=\"$(GIT_VERSION)\"
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 

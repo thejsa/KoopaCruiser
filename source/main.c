@@ -52,22 +52,6 @@ Result http_download(httpcContext *context)//This error handling needs updated w
 		return ret;
 	}
 
-	/*size = contentsize;
-	if(size>(240*400*3*2))size = 240*400*3*2;
-
-	framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-	memcpy(framebuf_top, buf, size);
-
-	gfxFlushBuffers();
-	gfxSwapBuffers();
-
-	framebuf_top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-	memcpy(framebuf_top, buf, size);
-
-	gfxFlushBuffers();
-	gfxSwapBuffers();
-	gspWaitForVBlank();*/
-
 	consoleSelect(&bottomScreen);
 	printf("%s", buffer);
 
@@ -78,6 +62,8 @@ Result http_download(httpcContext *context)//This error handling needs updated w
 
 int main()
 {
+	const char build_time[] = __DATE__ " " __TIME__;
+
 	Result ret=0;
 	httpcContext context;
 
@@ -86,7 +72,9 @@ int main()
 	consoleInit(GFX_TOP, &topScreen);
 	consoleInit(GFX_BOTTOM, &bottomScreen);
 	consoleSelect(&topScreen);
-	printf("Koopa Web Cruiser alpha\n");
+	printf("Koopa Cruiser\n");
+	printf("Version: %s\n", VERSION);
+	printf("Built: %s\n", build_time);
 	printf("Press START to exit.\n\n");
 	gfxFlushBuffers();
 
