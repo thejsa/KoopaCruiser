@@ -14,3 +14,7 @@ Thumbs.db
 
 *.3dsx
 *.elf
+
+# Extra stuff #
+###############
+*.bak
