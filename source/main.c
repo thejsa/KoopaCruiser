@@ -180,7 +180,7 @@ int main()
 	printf("Version: %s\n", VERSION);
 	printf("main.c modified: %s\n", __TIMESTAMP__);
 	printf("Built: %s\n\n", build_time);
-	printf("Press X to save the page\n")
+	printf("Press X to save the page\n");
 	printf("Press START to exit.\n\n");
 	gfxFlushBuffers();
 
