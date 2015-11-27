@@ -2,12 +2,6 @@
 ################
 build/
 
-# Compiled source #
-###################
-*.3dsx
-*.elf
-*.cia
-
 # OS generated files #
 ######################
 .DS_Store
@@ -17,3 +11,6 @@ build/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+*.3dsx
+*.elf
