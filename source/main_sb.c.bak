@@ -507,7 +507,7 @@ int main()
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
     consoleSelect(&topScreen);
-    printf("Koopa Cruiser"\n");
+    printf("Koopa Cruiser\n");
     printf("Press START to exit.\n\n");
     gfxFlushBuffers();
 

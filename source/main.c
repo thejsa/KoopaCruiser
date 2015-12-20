@@ -5,13 +5,15 @@
 
 #include <3ds.h>
 
+//#include <hbkb.h> HBKB will not play with standard C code
+
 PrintConsole topScreen, bottomScreen;
 char *url;
 int dlCounter;
 httpcContext context;
 Result ret = 0;
 
-Result http_download(httpcContext *context)//This error handling needs updated with proper text printing once ctrulib itself supports that.
+Result http_download(httpcContext *context)
 {
 	ret=0;
 	//u8* framebuf_top;
@@ -64,7 +66,7 @@ Result http_download(httpcContext *context)//This error handling needs updated w
 	return 0;
 }
 
-Result http_downloadsave(httpcContext *context)//This error handling needs updated with proper text printing once ctrulib itself supports that.
+Result http_downloadsave(httpcContext *context, char *filename)//This error handling needs updated with proper text printing once ctrulib itself supports that.
 {
     ret = 0;
     //u8* framebuf_top;
@@ -123,12 +125,12 @@ Result http_downloadsave(httpcContext *context)//This error handling needs updat
 
 		printf("Got file\n");
 
-		char filename[32];
+		//char filename[32];
 		FILE *dlfile;
 
 		char *fnameformat;
 
-		snprintf(filename, sizeof(char) * 32, "koopadl%i.txt", ++dlCounter);
+		//snprintf(filename, sizeof(char) * 32, "koopadl%i.txt", ++dlCounter);
 		printf("Saving to %s\n", filename);
 
     dlfile = fopen(filename, "w");
@@ -149,15 +151,22 @@ void downloadfile()
 {
     consoleSelect(&topScreen);
 
-    printf("Downloading %s\n",url);
+		//char *url2 = "http://koopacruiser.paperplane.io/binary.jpg";
+		char *url2 = url;
+
+		char *file_name;
+
+    file_name = strrchr( url2, '/' ) + 1;
+
+    printf("Downloading %s to %s\n",url2,file_name);
     gfxFlushBuffers();
 
-    ret = httpcOpenContext(&context, url , 0);
+    ret = httpcOpenContext(&context, url2 , 0);
     gfxFlushBuffers();
 
     if(ret==0)
     {
-        ret=http_downloadsave(&context);
+        ret=http_downloadsave(&context, file_name);
         gfxFlushBuffers();
         httpcCloseContext(&context);
     }
@@ -176,12 +185,15 @@ int main()
 	consoleInit(GFX_TOP, &topScreen);
 	consoleInit(GFX_BOTTOM, &bottomScreen);
 	consoleSelect(&topScreen);
-	printf("Koopa Cruiser\n");
+	/*printf("%s by %s\n", APPTITLE, APPAUTHOR);*/
+	printf("Koopa Cruiser by jsa\n");
 	printf("Version: %s\n", VERSION);
-	printf("main.c modified: %s\n", __TIMESTAMP__);
+	//printf("--dev build--\n");
+	printf("Modified: %s\n", __TIMESTAMP__);
 	printf("Built: %s\n\n", build_time);
 	printf("Press X to save the page\n");
-	printf("Press START to exit.\n\n");
+	printf("Press START to exit.\n");
+	printf("Press B to start the swkbd applet\n\n");
 	gfxFlushBuffers();
 
 	httpcInit();
@@ -220,6 +232,13 @@ int main()
 	    {
 	        downloadfile();
 	    }
+
+		/*if (kDown & KEY_B)
+			{
+				Result rc = APT_LaunchLibraryApplet(APPID_SOFTWARE_KEYBOARD, 0, NULL, 0);
+				if (rc) printf("APT_LaunchLibraryApplet: %08lX\n", rc);
+				printf("this is broken!");
+			}*/
 
 		// Flush and swap framebuffers
 		gfxFlushBuffers();

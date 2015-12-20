@@ -47,7 +47,7 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DVERSION=\"$(GIT_VERSION)\"
+CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -DVERSION=\"$(echo $GIT_VERSION | sed 's/ /\\ /g')\" -DAPPTITLE=\"$(echo $APP_TITLE | sed 's/ /\\ /g')\" -DAPPAUTHOR=\"$(echo $APP_AUTHOR | sed 's/ /\\ /g')\"
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 

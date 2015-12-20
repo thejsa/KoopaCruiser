@@ -12,9 +12,10 @@ build/
 ehthumbs.db
 Thumbs.db
 
-*.3dsx
-*.elf
+#*.3dsx
+#*.elf
 
 # Extra stuff #
 ###############
 *.bak
+*.mp3
