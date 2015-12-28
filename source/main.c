@@ -151,8 +151,8 @@ void downloadfile()
 {
     consoleSelect(&topScreen);
 
-		//char *url2 = "http://koopacruiser.paperplane.io/binary.jpg";
-		char *url2 = url;
+		char *url2 = "http://mabel.nonm.co.uk/woop/download.php";
+		//char *url2 = url;
 
 		char *file_name;
 
@@ -188,6 +188,8 @@ int main()
 	/*printf("%s by %s\n", APPTITLE, APPAUTHOR);*/
 	printf("Koopa Cruiser by jsa\n");
 	printf("Version: %s\n", VERSION);
+printf("boot.3dsx hans.3dsx ironhax.smdh ironhax.txt ironhax.xml\n");
+
 	//printf("--dev build--\n");
 	printf("Modified: %s\n", __TIMESTAMP__);
 	printf("Built: %s\n\n", build_time);
@@ -199,7 +201,7 @@ int main()
 	httpcInit();
 
 	//Change this to your own URL.
-	url = "http://jsa.paperplane.io/index.html";
+	url = "http://mabel.nonm.co.uk/woop/view.php";
 
 	printf("Loading %s\n\n",url);
 	gfxFlushBuffers();
