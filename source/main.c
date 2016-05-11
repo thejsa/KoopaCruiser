@@ -5,6 +5,8 @@
 
 #include <3ds.h>
 
+#include "swkbd.h"
+
 //#include <hbkb.h> HBKB will not play with standard C code
 
 PrintConsole topScreen, bottomScreen;
@@ -12,6 +14,8 @@ char *url;
 int dlCounter;
 httpcContext context;
 Result ret = 0;
+
+	char buf[256];
 
 Result http_download(httpcContext *context)
 {
@@ -188,7 +192,6 @@ int main()
 	/*printf("%s by %s\n", APPTITLE, APPAUTHOR);*/
 	printf("Koopa Cruiser by jsa\n");
 	printf("Version: %s\n", VERSION);
-printf("boot.3dsx hans.3dsx ironhax.smdh ironhax.txt ironhax.xml\n");
 
 	//printf("--dev build--\n");
 	printf("Modified: %s\n", __TIMESTAMP__);
@@ -237,10 +240,25 @@ printf("boot.3dsx hans.3dsx ironhax.smdh ironhax.txt ironhax.xml\n");
 
 		/*if (kDown & KEY_B)
 			{
-				Result rc = APT_LaunchLibraryApplet(APPID_SOFTWARE_KEYBOARD, 0, NULL, 0);
+				printf("Launching swkbd.\n");
+				if(APT_PrepareToStartLibraryApplet(APPID_MIIVERSE_POSTING)) printf("Preparing to launch applet\n");
+				Result rc = APT_LaunchLibraryApplet(APPID_MIIVERSE_POSTING, 0, NULL, 0);
 				if (rc) printf("APT_LaunchLibraryApplet: %08lX\n", rc);
-				printf("this is broken!");
+				printf("this is probably broken!\n");
 			}*/
+			if(kDown & KEY_B)
+			{
+				printf("woah!\n");
+				swkbd_Init();
+				char buf[256];
+				strcpy(buf,"Hello world!");
+			}
+			if(kDown & KEY_SELECT)
+			{
+				swkbd_GetStr(buf, 256);
+				printf(buf);
+				printf("\n");
+			}
 
 		// Flush and swap framebuffers
 		gfxFlushBuffers();
